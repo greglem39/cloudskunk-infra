@@ -19,8 +19,8 @@ resource "tls_private_key" "instance-key" { #generating an RSA key
   algorithm = var.key-algo
 }
 
-resource "aws_key_pair" "rose-court-instance-key" { #creating an instance key
-  key_name   = var.rose-court-key-pair
+resource "aws_key_pair" "cloudskunk-instance-key" { #creating an instance key
+  key_name   = var.cloudskunk-key-pair
   public_key = tls_private_key.instance-key.public_key_openssh
 }
 
@@ -69,12 +69,12 @@ resource "aws_security_group" "allow-RDP" { # want to allow RDP from specified l
 
 }
 
-# resource "aws_instance" "underworld-dc" { #using the above data for the AMI
+# resource "aws_instance" "cloudskunk-dc" { #using the above data for the AMI
 #   depends_on        = [tls_private_key.instance-key]
 #   ami               = data.aws_ami.windows.id
 #   instance_type     = var.windows-instance-type
 #   availability_zone = var.virginia-a
-#   key_name          = aws_key_pair.rose-court-instance-key.key_name
+#   key_name          = aws_key_pair.cloudskunk-instance-key.key_name
 #   get_password_data = var.get-pass-data
 #   security_groups   = [aws_security_group.allow-RDP.name]
 #   tags = {
@@ -85,12 +85,12 @@ resource "aws_security_group" "allow-RDP" { # want to allow RDP from specified l
 #   }
 # }
 
-resource "aws_instance" "underworld-member" { #creating a member ec2 for our AD domain
+resource "aws_instance" "cloudskunk-member" { #creating a member ec2 for our AD domain
   depends_on        = [tls_private_key.instance-key]
   ami               = data.aws_ami.windows.id
   instance_type     = var.windows-instance-type
   availability_zone = var.virginia-a
-  key_name          = aws_key_pair.rose-court-instance-key.key_name
+  key_name          = aws_key_pair.cloudskunk-instance-key.key_name
   get_password_data = var.get-pass-data
   security_groups   = [aws_security_group.allow-RDP.name]
   tags = {
@@ -103,15 +103,15 @@ resource "aws_instance" "underworld-member" { #creating a member ec2 for our AD 
 # resource "aws_ssm_parameter" "windows-ec2-dc" { # storing the windows password so we don't leave it in plaintext in code
 #   name       = var.parameter-name
 #   type       = var.parameter-type
-#   depends_on = [aws_instance.underworld-dc]
-#   value      = rsadecrypt(aws_instance.underworld-dc.password_data, nonsensitive(tls_private_key.instance-key.private_key_pem))
+#   depends_on = [aws_instance.cloudskunk-dc]
+#   value      = rsadecrypt(aws_instance.cloudskunk-dc.password_data, nonsensitive(tls_private_key.instance-key.private_key_pem))
 # }
 
 resource "aws_ssm_parameter" "windows-ec2-member" { # storing the windows password so we don't leave it in plaintext in code
   name       = var.member-parameter-name
   type       = var.parameter-type
-  depends_on = [aws_instance.underworld-member]
-  value      = rsadecrypt(aws_instance.underworld-member[0].password_data, nonsensitive(tls_private_key.instance-key.private_key_pem))
+  depends_on = [aws_instance.cloudskunk-member]
+  value      = rsadecrypt(aws_instance.cloudskunk-member[0].password_data, nonsensitive(tls_private_key.instance-key.private_key_pem))
 }
 
 # resource "aws_ssm_parameter" "nico-pass" { # storing the windows password so we don't leave it in plaintext in code
@@ -128,6 +128,6 @@ resource "aws_ssm_parameter" "windows-ec2-member" { # storing the windows passwo
 
 # resource "aws_ami_from_instance" "DC-ami" { # this was removed from the state file for use in manual testing. Can be recreated as more progress is made
 #   name               = "DC-ami"
-#   source_instance_id = aws_instance.underworld-dc.id
+#   source_instance_id = aws_instance.cloudskunk-dc.id
 
 # }

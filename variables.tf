@@ -55,8 +55,8 @@ variable "windows-instance-type" {
 
 }
 
-variable "rose-court-key-pair" {
-  default     = "rose-court-instance-key"
+variable "cloudskunk-key-pair" {
+  default     = "cloudskunk-instance-key"
   description = "key pair for the rose court"
 }
 
@@ -66,13 +66,13 @@ variable "get-pass-data" {
 }
 
 variable "instance-name" {
-  default     = "underworld-dc"
+  default     = "cloudskunk-dc"
   description = "name of our DC instance"
 
 }
 
 variable "member-instance-name" {
-  default     = "underworld-member-1"
+  default     = "cloudskunk-member-1"
   description = "name of our DC instance"
 
 }
@@ -141,7 +141,7 @@ variable "nico-param-name" {
 ### vars for user data file ###
 variable "ServerName" {
   description = "the name of the server"
-  default     = "UnderworldDC"
+  default     = "cloudskunkDC"
 
 }
 
@@ -160,13 +160,13 @@ variable "AdminSafeModePassword" {
 
 variable "DomainName" {
   description = "the domain name"
-  default     = "underworld.net"
+  default     = "cloudskunk.net"
   sensitive   = true
 }
 
 variable "DomainNetBiosName" {
   description = "the domain name"
-  default     = "UNDERWORLD"
+  default     = "cloudskunk"
   sensitive   = true
 }
 
