@@ -3,7 +3,7 @@ terraform {
     organization = "glitchycat"
 
     workspaces {
-      name = "rose-court-infra-tf"
+      name = "cloudskunk-infra"
     }
 
   }
