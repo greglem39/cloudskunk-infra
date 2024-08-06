@@ -24,16 +24,6 @@ resource "aws_key_pair" "cloudskunk-instance-key" { #creating an instance key
   public_key = tls_private_key.instance-key.public_key_openssh
 }
 
-# TODO:
-# Create AMI for DC installation - done 
-# Create VPC with DHCP option set for houseofhades.net domain
-# create IGW and attach to VPC 
-# Create Subnet within VPC 
-# Configure below SG to allow traffic within the subnet
-# move DC and member instances to new VPC/subnet
-# Automate EC2 instance(s) joining the domain via PowerShell
-# set up Lambda/EventBridge to shut off/start EC2 on the weekend - https://repost.aws/knowledge-center/start-stop-lambda-eventbridge
-
 resource "aws_security_group" "allow-RDP" { # want to allow RDP from specified location
   name        = var.rdp-sg-name
   description = "to allow home RDP"
@@ -69,22 +59,6 @@ resource "aws_security_group" "allow-RDP" { # want to allow RDP from specified l
 
 }
 
-# resource "aws_instance" "cloudskunk-dc" { #using the above data for the AMI
-#   depends_on        = [tls_private_key.instance-key]
-#   ami               = data.aws_ami.windows.id
-#   instance_type     = var.windows-instance-type
-#   availability_zone = var.virginia-a
-#   key_name          = aws_key_pair.cloudskunk-instance-key.key_name
-#   get_password_data = var.get-pass-data
-#   security_groups   = [aws_security_group.allow-RDP.name]
-#   tags = {
-#     Name = var.instance-name
-#   }
-#   lifecycle {
-#     prevent_destroy = false # we really do not want our DC to be destroyed ...
-#   }
-# }
-
 resource "aws_instance" "cloudskunk-member" { #creating a member ec2 for our AD domain
   depends_on        = [tls_private_key.instance-key]
   ami               = data.aws_ami.windows.id
@@ -99,35 +73,9 @@ resource "aws_instance" "cloudskunk-member" { #creating a member ec2 for our AD 
   count = 1 # change depending on how many you want to deploy
 
 }
-
-# resource "aws_ssm_parameter" "windows-ec2-dc" { # storing the windows password so we don't leave it in plaintext in code
-#   name       = var.parameter-name
-#   type       = var.parameter-type
-#   depends_on = [aws_instance.cloudskunk-dc]
-#   value      = rsadecrypt(aws_instance.cloudskunk-dc.password_data, nonsensitive(tls_private_key.instance-key.private_key_pem))
-# }
-
 resource "aws_ssm_parameter" "windows-ec2-member" { # storing the windows password so we don't leave it in plaintext in code
   name       = var.member-parameter-name
   type       = var.parameter-type
   depends_on = [aws_instance.cloudskunk-member]
   value      = rsadecrypt(aws_instance.cloudskunk-member[0].password_data, nonsensitive(tls_private_key.instance-key.private_key_pem))
 }
-
-# resource "aws_ssm_parameter" "nico-pass" { # storing the windows password so we don't leave it in plaintext in code
-#   name  = var.nico-param-name
-#   type  = var.parameter-type
-#   value = var.nico-password
-# }
-
-# resource "aws_ssm_parameter" "admin-safepass" { # storing the windows password so we don't leave it in plaintext in code
-#   name  = var.AdminSafeModePass-Param-name
-#   type  = var.parameter-type
-#   value = var.AdminSafeModePassword
-# }
-
-# resource "aws_ami_from_instance" "DC-ami" { # this was removed from the state file for use in manual testing. Can be recreated as more progress is made
-#   name               = "DC-ami"
-#   source_instance_id = aws_instance.cloudskunk-dc.id
-
-# }
