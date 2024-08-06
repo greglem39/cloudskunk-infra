@@ -114,11 +114,11 @@ resource "aws_ssm_parameter" "windows-ec2-member" { # storing the windows passwo
   value      = rsadecrypt(aws_instance.underworld-member[0].password_data, nonsensitive(tls_private_key.instance-key.private_key_pem))
 }
 
-resource "aws_ssm_parameter" "nico-pass" { # storing the windows password so we don't leave it in plaintext in code
-  name  = var.nico-param-name
-  type  = var.parameter-type
-  value = var.nico-password
-}
+# resource "aws_ssm_parameter" "nico-pass" { # storing the windows password so we don't leave it in plaintext in code
+#   name  = var.nico-param-name
+#   type  = var.parameter-type
+#   value = var.nico-password
+# }
 
 # resource "aws_ssm_parameter" "admin-safepass" { # storing the windows password so we don't leave it in plaintext in code
 #   name  = var.AdminSafeModePass-Param-name
