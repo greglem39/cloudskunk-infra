@@ -50,7 +50,7 @@ variable "key-algo" {
 }
 
 variable "windows-instance-type" {
-  default     = "t2.micro"
+  default     = "t2.small"
   description = "instance type for windows instances"
 
 }
