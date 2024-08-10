@@ -21,7 +21,7 @@ variable "name-filter" {
 }
 
 variable "name-filter-value" {
-  default     = "Windows_Server-2019-English-Full-Base-*"
+  default     = "TPM-Windows_Server-2022-English-Full-Base"
   description = "value of the name filter"
 }
 

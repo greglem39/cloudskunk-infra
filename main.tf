@@ -24,6 +24,11 @@ resource "aws_key_pair" "cloudskunk-instance-key" { #creating an instance key
   public_key = tls_private_key.instance-key.public_key_openssh
 }
 
+# VPC resource creation will go here
+# considering - do we create an IGW or an egress-only IGW? This is for testing, after all, with no inbound connections
+
+
+
 resource "aws_security_group" "allow-RDP" { # want to allow RDP from specified location
   name        = var.rdp-sg-name
   description = "to allow home RDP"
